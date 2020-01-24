@@ -4,7 +4,13 @@ import { Wallet } from './wallet';
 import '../setupTests';
 
 describe('Wallet component', () => {
-    const props = { balance: 20};
+    const mockDeposit = jest.fn();
+    const mockWithdraw = jest.fn();
+
+    const props = { balance: 20, 
+        deposit: mockDeposit,
+        withdraw: mockWithdraw
+    };
     
     const wallet = shallow(<Wallet {...props}/>);
     it ('renders properly', () => {
@@ -31,6 +37,23 @@ describe('Wallet component', () => {
 
         expect(wallet.state().balance).toEqual(parseInt(userInput, 10));
       })
+
+      describe(' and wants to deposit into wallet', ()=> {
+
+        beforeEach(() => wallet.find('.btn-deposit').simulate('click'));
+
+        it('dispacthes `deposit() action that receices via props`', ()=>{
+            expect(mockDeposit).toHaveBeenCalledWith(parseInt(userInput, 10));
+        })
+      })
+
+     describe(' and withdraws from wallet', ()=> {
+         beforeEach(() => wallet.find('.btn-withdraw').simulate('click'));
+
+         it ('dispatches `withdraw` action that receives in props', () => {
+             expect(mockWithdraw).toHaveBeenCalledWith(parseInt(userInput, 10));
+         })
+     })
 
     });
 });
